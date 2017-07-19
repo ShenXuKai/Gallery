@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 25
@@ -11,7 +10,6 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -34,9 +32,6 @@ android {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
@@ -51,77 +46,19 @@ dependencies {
     compile 'jp.wasabeef:glide-transformations:2.0.1'
     //easypermissions
     compile 'pub.devrel:easypermissions:0.4.2'
+
 }
-
-def siteUrl = 'https://github.com/JohnyPeng/ActionSheetDialog'      // 项目的主页
-def gitUrl = 'https://github.com/JohnyPeng/ActionSheetDialog.git'   // Git仓库的url
-group = "com.yootn.grally"       // Maven Group ID for the artifact，一般填你唯一的包名
-
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                // Add your description here
-                name 'A photo picker'     //项目描述
-                url siteUrl
-                // Set your license
-                licenses {
-                    license {
-                        //
-                        name 'Massachusetts Institute of Technology'
-                        url 'http://www.opensource.org/licenses/mit-license.php'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'Kalshen'        //填写的一些基本信息
-                        name 'Kalshen'
-                        email 'shenxuk@gmail.com'
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
-                }
-            }
-        }
+//添加
+publish {
+    userOrg = 'kalsen'//bintray.com用户名
+    groupId = 'com.yootn.function'//jcenter上的路径
+    artifactId = 'gallery'//项目名称
+    publishVersion = '0.0.1'//版本号
+    desc = 'A Simple Photo Picker'//描述，不重要
+    website = 'https://github.com/ShenXuKai/Gallery'//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
+}
+android {
+    lintOptions {
+        abortOnError false
     }
 }
-//下面这些我也不知道是什么意思，参考大神的于是就复制过来了
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-    configurations = ['archives']
-    pkg {
-        userOrg = "kalshen"//JCenter上创建的的Organization
-        repo = "Function"//你要上传的库的名字
-        name = "gallery"    //发布到JCenter上的项目名字
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        licenses = ["MIT"]
-        publish = true
-    }
-}
-
